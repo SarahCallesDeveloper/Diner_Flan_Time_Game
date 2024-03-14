@@ -2,19 +2,18 @@ import pygame
 
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 480
-WALL_WIDTH = SCREEN_WIDTH // 6
+WALL_WIDTH = SCREEN_WIDTH // 4.6
 WALL_HEIGHT = SCREEN_HEIGHT // 4
-
-DEFAULT_WALL_COLOR = (100, 100, 100)
-FLOOR_COLOR = (50, 50, 50)
-WALL_LEFT_COLOR = (255, 0, 0)
-WALL_MIDDLE_COLOR = (0, 255, 0)
-WALL_RIGHT_COLOR = (0, 0, 255)
 
 pygame.init()
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Diner Flan Time!")
+# Load images for background
+floor_image = pygame.image.load("./Images/Background/Floor.png").convert_alpha()
+left_wall_image = pygame.image.load("./Images/Background/LeftWall.png").convert_alpha()
+middle_wall_image = pygame.image.load("./Images/Background/MiddleWall.png").convert_alpha()
+right_wall_image = pygame.image.load("./Images/Background/RightWall.png").convert_alpha()
 
 running = True
 while running:
@@ -24,18 +23,18 @@ while running:
 
     screen.fill((0, 0, 0))
 
-    pygame.draw.polygon(screen, FLOOR_COLOR, [(0, SCREEN_HEIGHT), (0, SCREEN_HEIGHT // 4), 
-                                              (SCREEN_WIDTH, SCREEN_HEIGHT // 4), (SCREEN_WIDTH, SCREEN_HEIGHT)])
+    # Blit floor image
+    screen.blit(floor_image, (0, SCREEN_HEIGHT // 4.6))
+    
+    # Blit left wall image
+    screen.blit(left_wall_image, (0, 0))
 
-    pygame.draw.polygon(screen, WALL_LEFT_COLOR, [(0, SCREEN_HEIGHT), (WALL_WIDTH, SCREEN_HEIGHT // 4), 
-                                                   (WALL_WIDTH, 0), (0, 0)])
+    # Blit middle wall image
 
-    pygame.draw.rect(screen, WALL_MIDDLE_COLOR, (WALL_WIDTH, 0, SCREEN_WIDTH - 2 * WALL_WIDTH, WALL_HEIGHT))
+    screen.blit(middle_wall_image, (WALL_WIDTH, 0))
 
-    pygame.draw.polygon(screen, WALL_RIGHT_COLOR, [(SCREEN_WIDTH, SCREEN_HEIGHT), 
-                                                   (SCREEN_WIDTH - WALL_WIDTH, SCREEN_HEIGHT // 4), 
-                                                   (SCREEN_WIDTH - WALL_WIDTH, 0), 
-                                                   (SCREEN_WIDTH, 0)])
+    # Blit right wall image
+    screen.blit(right_wall_image, (SCREEN_WIDTH - WALL_WIDTH, 0))
 
     pygame.display.flip()
 
