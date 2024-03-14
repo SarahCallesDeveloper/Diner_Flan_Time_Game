@@ -1,0 +1,55 @@
+# .NET Core build files
+bin/
+obj/
+
+# .NET Core Visual Studio files
+.vs/
+*.user
+*.suo
+*.sln.docstates
+
+# Build results
+[Bb]in/
+[Dd]ebug/
+[Rr]elease/
+
+# .NET Core unit test results
+TestResults/
+
+# .NET Core NuGet packages
+*.nupkg
+*.snupkg
+
+# .NET Core StyleCop
+StyleCopReport.xml
+
+# .NET Core MSBuild log files
+msbuild*.log
+
+# .NET Core Razor precompiled views
+*_Pre*.cshtml
+
+# .NET Core SDK
+/.dotnet/
+
+# .NET Core CLI tools
+/.store/
+
+# .NET Core Visual Studio cache
+/VSCache/
+
+# .NET Core Visual Studio IntelliCode
+/.vscode/
+
+# .NET Core TFS artifacts
+/.tf/
+
+# .NET Core Rider IDE settings
+.idea/
+
+# .NET Core macOS hidden directory
+.DS_Store
+
+# .NET Core Rider user-specific files
+*.sln.iml
+*.csproj.user
