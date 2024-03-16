@@ -21,6 +21,8 @@ middle_wall_rect = pygame.Rect(WALL_WIDTH, 0, WALL_WIDTH, SCREEN_HEIGHT)
 right_wall_rect = pygame.Rect(SCREEN_WIDTH - WALL_WIDTH, 0, WALL_WIDTH, SCREEN_HEIGHT)
 
 left_wall_mask = pygame.mask.from_surface(left_wall_image)
+middle_wall_mask = pygame.mask.from_surface(middle_wall_image)
+right_wall_mask = pygame.mask.from_surface(right_wall_image)
 
 
 character_image = pygame.image.load(os.path.join("./Images\Characters\Waitress\Waitress.png")).convert_alpha()
@@ -28,7 +30,10 @@ character_rect = character_image.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIG
 
 character_mask= pygame.mask.from_surface(character_image)
 
-
+move_left=5
+move_up=5
+move_right=5
+move_down=5
 
 clock = pygame.time.Clock()
 
@@ -40,13 +45,13 @@ while running:
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
-        character_rect.x -= 5
+        character_rect.x -= move_left
     if keys[pygame.K_RIGHT]:
-        character_rect.x += 5
+        character_rect.x += move_right
     if keys[pygame.K_UP]:
-        character_rect.y -= 5
+        character_rect.y -= move_up
     if keys[pygame.K_DOWN]:
-        character_rect.y += 5
+        character_rect.y += move_down
 
     screen.fill((0, 0, 0))
     screen.blit(floor_image, (0, SCREEN_HEIGHT // 4.6))
@@ -56,8 +61,23 @@ while running:
     screen.blit(character_image, character_rect)
 
    # if character_mask.overlap(left_wall_image(0) - character_rect.x,left_wall_image(0) - character_rect.y )
+    
+    if character_mask.overlap(middle_wall_mask, ( middle_wall_rect.x - character_rect.x, middle_wall_rect.y - character_rect.y )):
+        move_up=0
+    else:
+        move_up =5
+
     if character_mask.overlap(left_wall_mask, ( left_wall_rect.x - character_rect.x, left_wall_rect.y - character_rect.y )):
-        print("COLISSIOOON")
+        move_left = move_up = 0
+    else:
+        move_left  =5
+
+
+    if character_mask.overlap(right_wall_mask, ( right_wall_rect.x - character_rect.x, right_wall_rect.y - character_rect.y )):
+        move_right = move_up = 0
+    else:
+        move_right  =5
+
     pygame.display.flip()
     clock.tick(60)
 
