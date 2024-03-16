@@ -33,20 +33,20 @@ character_mask = pygame.mask.from_surface(character_image)
 width, height = character_image.get_size()
 
 # Calculate the dimensions for the lower half
-lower_half_height = height // 2
+lower_quarter_height = height // 4
 
 # Create a new mask for the lower half
-lower_mask = pygame.mask.Mask((width, lower_half_height))
+lower_mask = pygame.mask.Mask((width, lower_quarter_height))
 
-# Copy the lower half of the original mask to the new mask
+# Copy the lower quarter of the original mask to the new mask
 for x in range(width):
-    for y in range(lower_half_height):
-        lower_mask.set_at((x, y), character_mask.get_at((x, y + lower_half_height)))
+    for y in range(lower_quarter_height):
+        lower_mask.set_at((x, y), character_mask.get_at((x, y + 3 * lower_quarter_height)))
 
 # Convert the lower mask to a surface
 lower_mask_surface = lower_mask.to_surface()
 # Create a rectangle for the lower mask surface
-lower_mask_rect = pygame.Rect(0, 0, width, lower_half_height)
+lower_mask_rect = pygame.Rect(0, 0, width, lower_quarter_height)
 
 
 
@@ -74,7 +74,7 @@ while running:
     if keys[pygame.K_DOWN]:
         character_rect.y += move_down
 
-    lower_mask_rect.topleft = character_rect.left, character_rect.bottom - lower_half_height
+    lower_mask_rect.topleft = character_rect.left, character_rect.bottom - lower_quarter_height
 
     screen.fill((0, 0, 0))
     screen.blit(floor_image, (0, SCREEN_HEIGHT // 4.6))
