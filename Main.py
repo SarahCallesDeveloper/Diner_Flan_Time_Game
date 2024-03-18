@@ -24,18 +24,24 @@ left_wall_mask = pygame.mask.from_surface(left_wall_image)
 middle_wall_mask = pygame.mask.from_surface(middle_wall_image)
 right_wall_mask = pygame.mask.from_surface(right_wall_image)
 
+mushroom_table_Image_ = pygame.image.load("./Images/Background/MushroomTable.png")
+mushroom_table_mask = pygame.mask.from_surface(mushroom_table_Image_)
+mushroom_table_rect = mushroom_table_Image_.get_rect(center=(SCREEN_WIDTH // 1.5, SCREEN_HEIGHT // 4))
+mushroom_table_SmallMask_rect = mushroom_table_rect.inflate(0, -mushroom_table_rect.height // 1.5)
+mushroom_table_SmallMask_rect.bottom = mushroom_table_rect.bottom
+
+small_mask_surface = pygame.Surface((mushroom_table_SmallMask_rect.width, mushroom_table_SmallMask_rect.height))
+
 
 character_image = pygame.image.load(os.path.join("./Images\Characters\Waitress\Waitress.png")).convert_alpha()
 character_rect = character_image.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
-# Create a mask from the character image
+
 character_mask = pygame.mask.from_surface(character_image)
 width, height = character_image.get_size()
 
-# Calculate the dimensions for the lower half
 lower_quarter_height = height // 4
 
-# Create a new mask for the lower half
 lower_mask = pygame.mask.Mask((width, lower_quarter_height))
 
 # Copy the lower quarter of the original mask to the new mask
@@ -43,18 +49,33 @@ for x in range(width):
     for y in range(lower_quarter_height):
         lower_mask.set_at((x, y), character_mask.get_at((x, y + 3 * lower_quarter_height)))
 
-# Convert the lower mask to a surface
 lower_mask_surface = lower_mask.to_surface()
 # Create a rectangle for the lower mask surface
 lower_mask_rect = pygame.Rect(0, 0, width, lower_quarter_height)
 
+def update_image_layer(character_mask, character_rect, mushroom_table_SmallMask_rect, lower_mask_rect):
+    # Get the bounding rectangle of the character mask relative to the mushroom table
+    character_mask_rect = character_mask.get_bounding_rects()[0]
+    character_mask_rect.move_ip(character_rect.topleft[0] - mushroom_table_SmallMask_rect.left, character_rect.topleft[1] - mushroom_table_SmallMask_rect.top)
+    
+    # Check if the character is below the mushroom
+    if lower_mask_rect.bottom < mushroom_table_SmallMask_rect.bottom:
+        screen.blit(character_image, character_rect)
+        screen.blit(mushroom_table_Image_, mushroom_table_rect)
+    else:
+        screen.blit(mushroom_table_Image_, mushroom_table_rect)
+        screen.blit(character_image, character_rect)
 
+def move_character(character_rect, direction, movement_value):
+    if direction == 'left':
+        character_rect.x -= movement_value
+    elif direction == 'right':
+        character_rect.x += movement_value
+    elif direction == 'up':
+        character_rect.y -= movement_value
+    elif direction == 'down':
+        character_rect.y += movement_value
 
-
-move_left=5
-move_up=5
-move_right=5
-move_down=5
 
 clock = pygame.time.Clock()
 
@@ -65,14 +86,15 @@ while running:
             running = False
 
     keys = pygame.key.get_pressed()
+    movement_value = 5
     if keys[pygame.K_LEFT]:
-        character_rect.x -= move_left
+        move_character(character_rect, 'left', movement_value)
     if keys[pygame.K_RIGHT]:
-        character_rect.x += move_right
+        move_character(character_rect, 'right', movement_value)
     if keys[pygame.K_UP]:
-        character_rect.y -= move_up
+        move_character(character_rect, 'up', movement_value)
     if keys[pygame.K_DOWN]:
-        character_rect.y += move_down
+        move_character(character_rect, 'down', movement_value)
 
     lower_mask_rect.topleft = character_rect.left, character_rect.bottom - lower_quarter_height
 
@@ -81,27 +103,10 @@ while running:
     screen.blit(left_wall_image, (0, 0))
     screen.blit(middle_wall_image, (WALL_WIDTH, 0))
     screen.blit(right_wall_image, (SCREEN_WIDTH - WALL_WIDTH, 0))
-    screen.blit(character_image, character_rect)
-    #screen.blit(lower_mask_surface ,lower_mask_rect)
-
-   # if character_mask.overlap(left_wall_image(0) - character_rect.x,left_wall_image(0) - character_rect.y )
+    update_image_layer(lower_mask,character_rect, mushroom_table_SmallMask_rect,lower_mask_rect)
+ 
+   
     
-    if lower_mask.overlap(middle_wall_mask, ( middle_wall_rect.x - lower_mask_rect.x, middle_wall_rect.y - lower_mask_rect.y )):
-        move_up=0
-    else:
-        move_up =5
-
-    if lower_mask.overlap(left_wall_mask, ( left_wall_rect.x - lower_mask_rect.x, left_wall_rect.y - lower_mask_rect.y )):
-        move_left = move_up = 0
-    else:
-        move_left  =5
-
-
-    if lower_mask.overlap(right_wall_mask, ( right_wall_rect.x - lower_mask_rect.x, right_wall_rect.y - lower_mask_rect.y )):
-        move_right = move_up = 0
-    else:
-        move_right  =5
-
     pygame.display.flip()
     clock.tick(60)
 
