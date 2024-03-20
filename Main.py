@@ -50,7 +50,6 @@ for x in range(width):
         lower_mask.set_at((x, y), character_mask.get_at((x, y + 3 * lower_quarter_height)))
 
 lower_mask_surface = lower_mask.to_surface()
-# Create a rectangle for the lower mask surface
 lower_mask_rect = pygame.Rect(0, 0, width, lower_quarter_height)
 
 obstacles_Array=[mushroom_table_SmallMask_rect]
@@ -67,10 +66,15 @@ def update_image_layer(character_mask, character_rect, mushroom_table_SmallMask_
         screen.blit(mushroom_table_Image_, mushroom_table_rect)
         screen.blit(character_image, character_rect)
 
-def check_collision(lower_mask_rect, mushroom_table_SmallMask_rect):
-    return lower_mask_rect.colliderect(mushroom_table_SmallMask_rect)
-def move_character(character_rect, direction, movement_value, obstacles):
+def check_collision(lower_mask_rect, obstacle_rect):
+    return lower_mask_rect.colliderect(obstacle_rect)
+
+def check_collision_masks(mask_rect, mask):
+    return lower_mask.overlap(right_wall_mask, ( right_wall_rect.x - lower_mask_rect.x, right_wall_rect.y - lower_mask_rect.y ))
+
+def move_character(character_rect, character_mask, direction, movement_value, obstacles, mask_array):
     new_rect = character_rect.copy()
+    
     if direction == 'left':
         new_rect.x -= movement_value
     elif direction == 'right':
@@ -80,17 +84,22 @@ def move_character(character_rect, direction, movement_value, obstacles):
     elif direction == 'down':
         new_rect.y += movement_value
 
-    # Iterate over each obstacle rect and check collision
+    # Check collision with obstacles(rects)
     for obstacle_rect in obstacles:
-        lower_mask_rect = obstacle_rect.copy()
-        lower_mask_rect.topleft = new_rect.left, new_rect.bottom - lower_mask_rect.height
-
-        # Check collision using the adjusted lower_mask_rect
+        lower_mask_rect = pygame.Rect(new_rect.left, new_rect.bottom - character_rect.height // 4, character_rect.width, character_rect.height // 4)
         if not check_collision(lower_mask_rect, obstacle_rect):
             character_rect = new_rect
-            break  # Exit the loop if there is no collision with any obstacle rect
+            break  
+    # Check collision with masks
+    for mask in mask_array:
+        if check_collision_masks(character_mask, mask):
+             character_rect = new_rect
 
     return character_rect
+
+masks_array=[middle_wall_mask]
+
+
 
 clock = pygame.time.Clock()
 
@@ -103,13 +112,13 @@ while running:
     keys = pygame.key.get_pressed()
     movement_value = 5
     if keys[pygame.K_LEFT]:
-        character_rect = move_character(character_rect, 'left', movement_value, obstacles_Array)
+        character_rect = move_character(character_rect, character_mask, 'left', movement_value, obstacles_Array, masks_array)
     if keys[pygame.K_RIGHT]:
-        character_rect = move_character(character_rect, 'right', movement_value, obstacles_Array)
+        character_rect = move_character(character_rect, character_mask, 'right', movement_value, obstacles_Array, masks_array)
     if keys[pygame.K_UP]:
-        character_rect = move_character(character_rect, 'up', movement_value, obstacles_Array)
+        character_rect = move_character(character_rect, character_mask, 'up', movement_value, obstacles_Array, masks_array)
     if keys[pygame.K_DOWN]:
-        character_rect = move_character(character_rect, 'down', movement_value, obstacles_Array)
+        character_rect = move_character(character_rect, character_mask, 'down', movement_value, obstacles_Array, masks_array)
 
     lower_mask_rect.topleft = character_rect.left, character_rect.bottom - lower_quarter_height
 
@@ -119,8 +128,8 @@ while running:
     screen.blit(middle_wall_image, (WALL_WIDTH, 0))
     screen.blit(right_wall_image, (SCREEN_WIDTH - WALL_WIDTH, 0))
     update_image_layer(lower_mask,character_rect, mushroom_table_SmallMask_rect,lower_mask_rect)
-    #screen.blit(lower_mask_surface,lower_mask_rect)
-   
+    screen.blit(lower_mask_surface,lower_mask_rect)
+
     
     pygame.display.flip()
     clock.tick(60)
