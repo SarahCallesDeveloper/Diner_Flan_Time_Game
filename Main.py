@@ -53,6 +53,8 @@ lower_mask_surface = lower_mask.to_surface()
 # Create a rectangle for the lower mask surface
 lower_mask_rect = pygame.Rect(0, 0, width, lower_quarter_height)
 
+obstacles_Array=[mushroom_table_SmallMask_rect]
+
 def update_image_layer(character_mask, character_rect, mushroom_table_SmallMask_rect, lower_mask_rect):
     
     character_mask_rect = character_mask.get_bounding_rects()[0]
@@ -67,8 +69,7 @@ def update_image_layer(character_mask, character_rect, mushroom_table_SmallMask_
 
 def check_collision(lower_mask_rect, mushroom_table_SmallMask_rect):
     return lower_mask_rect.colliderect(mushroom_table_SmallMask_rect)
-
-def move_character(character_rect, direction, movement_value, mushroom_table_SmallMask_rect):
+def move_character(character_rect, direction, movement_value, obstacles):
     new_rect = character_rect.copy()
     if direction == 'left':
         new_rect.x -= movement_value
@@ -79,11 +80,15 @@ def move_character(character_rect, direction, movement_value, mushroom_table_Sma
     elif direction == 'down':
         new_rect.y += movement_value
 
-    lower_mask_rect.topleft = new_rect.left, new_rect.bottom - lower_mask_rect.height
+    # Iterate over each obstacle rect and check collision
+    for obstacle_rect in obstacles:
+        lower_mask_rect = obstacle_rect.copy()
+        lower_mask_rect.topleft = new_rect.left, new_rect.bottom - lower_mask_rect.height
 
-    # Check collision using the adjusted lower_mask_rect
-    if not check_collision(lower_mask_rect, mushroom_table_SmallMask_rect):
-        character_rect = new_rect
+        # Check collision using the adjusted lower_mask_rect
+        if not check_collision(lower_mask_rect, obstacle_rect):
+            character_rect = new_rect
+            break  # Exit the loop if there is no collision with any obstacle rect
 
     return character_rect
 
@@ -98,13 +103,13 @@ while running:
     keys = pygame.key.get_pressed()
     movement_value = 5
     if keys[pygame.K_LEFT]:
-        character_rect = move_character(character_rect, 'left', movement_value, mushroom_table_SmallMask_rect)
+        character_rect = move_character(character_rect, 'left', movement_value, obstacles_Array)
     if keys[pygame.K_RIGHT]:
-        character_rect = move_character(character_rect, 'right', movement_value, mushroom_table_SmallMask_rect)
+        character_rect = move_character(character_rect, 'right', movement_value, obstacles_Array)
     if keys[pygame.K_UP]:
-        character_rect = move_character(character_rect, 'up', movement_value, mushroom_table_SmallMask_rect)
+        character_rect = move_character(character_rect, 'up', movement_value, obstacles_Array)
     if keys[pygame.K_DOWN]:
-        character_rect = move_character(character_rect, 'down', movement_value, mushroom_table_SmallMask_rect)
+        character_rect = move_character(character_rect, 'down', movement_value, obstacles_Array)
 
     lower_mask_rect.topleft = character_rect.left, character_rect.bottom - lower_quarter_height
 
