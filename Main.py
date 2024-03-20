@@ -65,10 +65,10 @@ def update_image_layer(character_mask, character_rect, mushroom_table_SmallMask_
         screen.blit(mushroom_table_Image_, mushroom_table_rect)
         screen.blit(character_image, character_rect)
 
-def check_collision(character_rect, mushroom_table_rect):
-    return character_rect.colliderect(mushroom_table_rect)
+def check_collision(lower_mask_rect, mushroom_table_SmallMask_rect):
+    return lower_mask_rect.colliderect(mushroom_table_SmallMask_rect)
 
-def move_character(character_rect, direction, movement_value, mushroom_table_rect):
+def move_character(character_rect, direction, movement_value, mushroom_table_SmallMask_rect):
     new_rect = character_rect.copy()
     if direction == 'left':
         new_rect.x -= movement_value
@@ -79,8 +79,12 @@ def move_character(character_rect, direction, movement_value, mushroom_table_rec
     elif direction == 'down':
         new_rect.y += movement_value
 
-    if not check_collision(new_rect, mushroom_table_rect):
+    lower_mask_rect.topleft = new_rect.left, new_rect.bottom - lower_mask_rect.height
+
+    # Check collision using the adjusted lower_mask_rect
+    if not check_collision(lower_mask_rect, mushroom_table_SmallMask_rect):
         character_rect = new_rect
+
     return character_rect
 
 clock = pygame.time.Clock()
@@ -94,13 +98,13 @@ while running:
     keys = pygame.key.get_pressed()
     movement_value = 5
     if keys[pygame.K_LEFT]:
-        character_rect = move_character(character_rect, 'left', movement_value, mushroom_table_rect)
+        character_rect = move_character(character_rect, 'left', movement_value, mushroom_table_SmallMask_rect)
     if keys[pygame.K_RIGHT]:
-        character_rect = move_character(character_rect, 'right', movement_value, mushroom_table_rect)
+        character_rect = move_character(character_rect, 'right', movement_value, mushroom_table_SmallMask_rect)
     if keys[pygame.K_UP]:
-        character_rect = move_character(character_rect, 'up', movement_value, mushroom_table_rect)
+        character_rect = move_character(character_rect, 'up', movement_value, mushroom_table_SmallMask_rect)
     if keys[pygame.K_DOWN]:
-        character_rect = move_character(character_rect, 'down', movement_value, mushroom_table_rect)
+        character_rect = move_character(character_rect, 'down', movement_value, mushroom_table_SmallMask_rect)
 
     lower_mask_rect.topleft = character_rect.left, character_rect.bottom - lower_quarter_height
 
@@ -110,7 +114,7 @@ while running:
     screen.blit(middle_wall_image, (WALL_WIDTH, 0))
     screen.blit(right_wall_image, (SCREEN_WIDTH - WALL_WIDTH, 0))
     update_image_layer(lower_mask,character_rect, mushroom_table_SmallMask_rect,lower_mask_rect)
- 
+    #screen.blit(lower_mask_surface,lower_mask_rect)
    
     
     pygame.display.flip()
