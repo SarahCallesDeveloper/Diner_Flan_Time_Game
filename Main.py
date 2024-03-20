@@ -54,11 +54,10 @@ lower_mask_surface = lower_mask.to_surface()
 lower_mask_rect = pygame.Rect(0, 0, width, lower_quarter_height)
 
 def update_image_layer(character_mask, character_rect, mushroom_table_SmallMask_rect, lower_mask_rect):
-    # Get the bounding rectangle of the character mask relative to the mushroom table
+    
     character_mask_rect = character_mask.get_bounding_rects()[0]
     character_mask_rect.move_ip(character_rect.topleft[0] - mushroom_table_SmallMask_rect.left, character_rect.topleft[1] - mushroom_table_SmallMask_rect.top)
     
-    # Check if the character is below the mushroom
     if lower_mask_rect.bottom < mushroom_table_SmallMask_rect.bottom:
         screen.blit(character_image, character_rect)
         screen.blit(mushroom_table_Image_, mushroom_table_rect)
@@ -66,16 +65,23 @@ def update_image_layer(character_mask, character_rect, mushroom_table_SmallMask_
         screen.blit(mushroom_table_Image_, mushroom_table_rect)
         screen.blit(character_image, character_rect)
 
-def move_character(character_rect, direction, movement_value):
-    if direction == 'left':
-        character_rect.x -= movement_value
-    elif direction == 'right':
-        character_rect.x += movement_value
-    elif direction == 'up':
-        character_rect.y -= movement_value
-    elif direction == 'down':
-        character_rect.y += movement_value
+def check_collision(character_rect, mushroom_table_rect):
+    return character_rect.colliderect(mushroom_table_rect)
 
+def move_character(character_rect, direction, movement_value, mushroom_table_rect):
+    new_rect = character_rect.copy()
+    if direction == 'left':
+        new_rect.x -= movement_value
+    elif direction == 'right':
+        new_rect.x += movement_value
+    elif direction == 'up':
+        new_rect.y -= movement_value
+    elif direction == 'down':
+        new_rect.y += movement_value
+
+    if not check_collision(new_rect, mushroom_table_rect):
+        character_rect = new_rect
+    return character_rect
 
 clock = pygame.time.Clock()
 
@@ -88,13 +94,13 @@ while running:
     keys = pygame.key.get_pressed()
     movement_value = 5
     if keys[pygame.K_LEFT]:
-        move_character(character_rect, 'left', movement_value)
+        character_rect = move_character(character_rect, 'left', movement_value, mushroom_table_rect)
     if keys[pygame.K_RIGHT]:
-        move_character(character_rect, 'right', movement_value)
+        character_rect = move_character(character_rect, 'right', movement_value, mushroom_table_rect)
     if keys[pygame.K_UP]:
-        move_character(character_rect, 'up', movement_value)
+        character_rect = move_character(character_rect, 'up', movement_value, mushroom_table_rect)
     if keys[pygame.K_DOWN]:
-        move_character(character_rect, 'down', movement_value)
+        character_rect = move_character(character_rect, 'down', movement_value, mushroom_table_rect)
 
     lower_mask_rect.topleft = character_rect.left, character_rect.bottom - lower_quarter_height
 
