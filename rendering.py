@@ -14,9 +14,9 @@ def render_screen(screen, floor_image, left_wall_image, middle_wall_image, right
     
     if lower_mask_rect.bottom < mushroom_table_SmallMask_rect.bottom:
         screen.blit(character_image, character_rect)
-        screen.blit(mushroom_table_Image_, mushroom_table_rect)
+        screen.blit(mushroom_tables[0].image, mushroom_tables[0].rect)
     else:
-        screen.blit(mushroom_table_Image_, mushroom_table_rect)
+        screen.blit(mushroom_tables[0].image, mushroom_tables[0].rect)
         screen.blit(character_image, character_rect)
 
     pygame.display.flip()

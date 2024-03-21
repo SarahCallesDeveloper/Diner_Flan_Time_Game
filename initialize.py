@@ -26,13 +26,25 @@ left_wall_mask = pygame.mask.from_surface(left_wall_image)
 middle_wall_mask = pygame.mask.from_surface(middle_wall_image)
 right_wall_mask = pygame.mask.from_surface(right_wall_image)
 
-#MUSHROOM
-mushroom_table_Image_ = pygame.image.load("./Images/Background/MushroomTable.png")
-mushroom_table_mask = pygame.mask.from_surface(mushroom_table_Image_)
-mushroom_table_rect = mushroom_table_Image_.get_rect(center=(SCREEN_WIDTH // 1.5, SCREEN_HEIGHT // 4))
-mushroom_table_SmallMask_rect = mushroom_table_rect.inflate(0, -mushroom_table_rect.height // 1.5)
-mushroom_table_SmallMask_rect.bottom = mushroom_table_rect.bottom
-small_mask_surface = pygame.Surface((mushroom_table_SmallMask_rect.width, mushroom_table_SmallMask_rect.height))
+#MUSHROOMS
+class MushroomTable:
+    def __init__(self, image, center_x, center_y, label):
+        self.image = image
+        self.mask = pygame.mask.from_surface(image)
+        self.rect = image.get_rect(center=(center_x, center_y))
+        self.small_mask_rect = self.rect.inflate(0, -self.rect.height // 1.5)
+        self.small_mask_rect.bottom = self.rect.bottom
+        self.label = label
+
+mushroom_table_image = pygame.image.load("./Images/Background/MushroomTable.png")
+
+# instances of mushroom tables with labels
+mushroom_tables = [
+    MushroomTable(mushroom_table_image, SCREEN_WIDTH // 1.5, SCREEN_HEIGHT // 4, "Table 1"),
+    MushroomTable(mushroom_table_image, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, "Table 2"),
+    MushroomTable(mushroom_table_image, SCREEN_WIDTH // 3, SCREEN_HEIGHT // 3, "Table 3")
+]
+
 
 #CHARACTER
 character_image = pygame.image.load(os.path.join("./Images\Characters\Waitress\Waitress.png")).convert_alpha()
@@ -49,5 +61,5 @@ lower_mask_surface = lower_mask.to_surface()
 lower_mask_rect = pygame.Rect(0, 0, width, lower_quarter_height)
 
 #ARRAYS
-obstacles_Array=[mushroom_table_SmallMask_rect]
+obstacles_Array=[mushroom_tables[0].small_mask_rect]
 masks_array=[middle_wall_mask]

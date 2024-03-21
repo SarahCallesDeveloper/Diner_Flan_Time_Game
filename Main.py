@@ -17,7 +17,7 @@ while running:
         character_rect, lower_mask_rect = result
 
     # Rendering
-    render_screen(screen, floor_image, left_wall_image, middle_wall_image, right_wall_image, lower_mask, character_rect, mushroom_table_SmallMask_rect, lower_mask_rect, SCREEN_HEIGHT)
+    render_screen(screen, floor_image, left_wall_image, middle_wall_image, right_wall_image, lower_mask, character_rect, mushroom_tables[0].rect, lower_mask_rect, SCREEN_HEIGHT)
 
     clock.tick(60)
 
