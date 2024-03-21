@@ -12,11 +12,13 @@ def render_screen(screen, floor_image, left_wall_image, middle_wall_image, right
     character_mask_rect = character_mask.get_bounding_rects()[0]
     character_mask_rect.move_ip(character_rect.topleft[0] - mushroom_table_SmallMask_rect.left, character_rect.topleft[1] - mushroom_table_SmallMask_rect.top)
     
-    if lower_mask_rect.bottom < mushroom_table_SmallMask_rect.bottom:
-        screen.blit(character_image, character_rect)
-        screen.blit(mushroom_tables[0].image, mushroom_tables[0].rect)
-    else:
-        screen.blit(mushroom_tables[0].image, mushroom_tables[0].rect)
-        screen.blit(character_image, character_rect)
+    for mushroom in mushroom_tables:
+        if lower_mask_rect.bottom < mushroom.rect.bottom:
+            print(f"mushroom number {mushroom.label} is below character")
+            screen.blit(character_image, character_rect)
+            screen.blit(mushroom.image, mushroom.rect)
+        else:
+            screen.blit(mushroom.image, mushroom.rect)
+            screen.blit(character_image, character_rect)
 
     pygame.display.flip()
