@@ -20,10 +20,10 @@ def move_character(character, direction, movement_value):
         new_rect.y += movement_value
 
     for obstacle_rect in obstacles_Array:
-        lower_mask_rect = pygame.Rect(new_rect.left, new_rect.bottom - character.rect.height // 4, character.rect.width, character.rect.height // 4)
+        lower_mask_rect = character.lower_mask_rect
         if not check_collision(lower_mask_rect, obstacle_rect):
             character.rect = new_rect
-            break
+            
 
     for mask in masks_array:
         if check_collision_masks(character.rect, mask):
