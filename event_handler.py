@@ -1,14 +1,14 @@
-# event_handling.py
 import pygame
-from initialize import * 
+from initialize import Waitress, obstacles_Array, masks_array
+
 def check_collision(lower_mask_rect, obstacle_rect):
     return lower_mask_rect.colliderect(obstacle_rect)
 
 def check_collision_masks(mask_rect, mask):
-    return lower_mask.overlap(right_wall_mask, (right_wall_rect.x - lower_mask_rect.x, right_wall_rect.y - lower_mask_rect.y))
+    return Waitress.lower_mask.overlap(mask, (mask.get_rect().x - mask_rect.x, mask.get_rect().y - mask_rect.y))
 
-def move_character(character_rect, character_mask, direction, movement_value, obstacles, mask_array):
-    new_rect = character_rect.copy()
+def move_character(character, direction, movement_value):
+    new_rect = character.rect.copy()
 
     if direction == 'left':
         new_rect.x -= movement_value
@@ -19,57 +19,33 @@ def move_character(character_rect, character_mask, direction, movement_value, ob
     elif direction == 'down':
         new_rect.y += movement_value
 
-    # Check collision with obstacles(rects)
-    for obstacle_rect in obstacles:
-        lower_mask_rect = pygame.Rect(new_rect.left, new_rect.bottom - character_rect.height // 4, character_rect.width, character_rect.height // 4)
+    for obstacle_rect in obstacles_Array:
+        lower_mask_rect = pygame.Rect(new_rect.left, new_rect.bottom - character.rect.height // 4, character.rect.width, character.rect.height // 4)
         if not check_collision(lower_mask_rect, obstacle_rect):
-            character_rect = new_rect
+            character.rect = new_rect
             break
-    # Check collision with masks
-    for mask in mask_array:
-        if check_collision_masks(character_mask, mask):
-            character_rect = new_rect
 
-    return character_rect
+    for mask in masks_array:
+        if check_collision_masks(character.rect, mask):
+            character.rect = new_rect
 
-def handle_events(character_rect, character_mask, lower_quarter_height, movement_value, obstacles_Array, masks_array):
+    return character.rect
+
+def handle_events(character, movement_value):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
-        character_rect = move_character(character_rect, character_mask, 'left', movement_value, obstacles_Array, masks_array)
+        character.rect = move_character(character, 'left', movement_value)
     if keys[pygame.K_RIGHT]:
-        character_rect = move_character(character_rect, character_mask, 'right', movement_value, obstacles_Array, masks_array)
+        character.rect = move_character(character, 'right', movement_value)
     if keys[pygame.K_UP]:
-        character_rect = move_character(character_rect, character_mask, 'up', movement_value, obstacles_Array, masks_array)
+        character.rect = move_character(character, 'up', movement_value)
     if keys[pygame.K_DOWN]:
-        character_rect = move_character(character_rect, character_mask, 'down', movement_value, obstacles_Array, masks_array)
+        character.rect = move_character(character, 'down', movement_value)
 
-    lower_mask_rect = pygame.Rect(character_rect.left, character_rect.bottom - lower_quarter_height, character_rect.width, lower_quarter_height)
-    return character_rect, lower_mask_rect
+    lower_mask_rect = pygame.Rect(character.rect.left, character.rect.bottom - character.lower_quarter_height, character.rect.width, character.lower_quarter_height)
+    return character.rect, lower_mask_rect
 
-def move_character(character_rect, character_mask, direction, movement_value, obstacles, mask_array):
-    new_rect = character_rect.copy()
-
-    if direction == 'left':
-        new_rect.x -= movement_value
-    elif direction == 'right':
-        new_rect.x += movement_value
-    elif direction == 'up':
-        new_rect.y -= movement_value
-    elif direction == 'down':
-        new_rect.y += movement_value
-
-    for obstacle_rect in obstacles:
-        lower_mask_rect = pygame.Rect(new_rect.left, new_rect.bottom - character_rect.height // 4, character_rect.width, character_rect.height // 4)
-        if not lower_mask_rect.colliderect(obstacle_rect):
-            character_rect = new_rect
-            break
-
-    for mask in mask_array:
-        if character_mask.overlap(mask, ( mask.get_rect().x - lower_mask_rect.x, mask.get_rect().y - lower_mask_rect.y )):
-            character_rect = new_rect
-
-    return character_rect

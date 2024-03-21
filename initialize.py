@@ -47,19 +47,22 @@ mushroom_tables = [
 
 
 #CHARACTER
-character_image = pygame.image.load(os.path.join("./Images\Characters\Waitress\Waitress.png")).convert_alpha()
-character_rect = character_image.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-character_mask = pygame.mask.from_surface(character_image)
-width, height = character_image.get_size()
-lower_quarter_height = height // 4
-lower_mask = pygame.mask.Mask((width, lower_quarter_height))
-# Copy the lower quarter of the original mask to the new mask
-for x in range(width):
-    for y in range(lower_quarter_height):
-        lower_mask.set_at((x, y), character_mask.get_at((x, y + 3 * lower_quarter_height)))
-lower_mask_surface = lower_mask.to_surface()
-lower_mask_rect = pygame.Rect(0, 0, width, lower_quarter_height)
+class Character:
+    def __init__(self, image_path, x, y):
+        self.image = pygame.image.load(image_path).convert_alpha()
+        self.rect = self.image.get_rect(center=(x, y))
+        self.mask = pygame.mask.from_surface(self.image)
+        self.width, self.height = self.image.get_size()
+        self.lower_quarter_height = self.height // 4
+        self.lower_mask = pygame.mask.Mask((self.width, self.lower_quarter_height))
+        for x in range(self.width):
+            for y in range(self.lower_quarter_height):
+                self.lower_mask.set_at((x, y), self.mask.get_at((x, y + 3 * self.lower_quarter_height)))
+        self.lower_mask_surface = self.lower_mask.to_surface()
+        self.lower_mask_rect = pygame.Rect(0, 0, self.width, self.lower_quarter_height)                    
+Waitress = Character("./Images/Characters/Waitress/Waitress.png", SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
 
 #ARRAYS
+objects_array=[]
 obstacles_Array=[mushroom_tables[0].small_mask_rect]
 masks_array=[middle_wall_mask]
