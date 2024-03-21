@@ -7,7 +7,7 @@ SCREEN_HEIGHT = 480
 WALL_WIDTH = SCREEN_WIDTH // 4.6
 WALL_HEIGHT = SCREEN_HEIGHT // 4
 
-pygame.init()
+
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Diner Flan Time!")
@@ -53,3 +53,4 @@ lower_mask_rect = pygame.Rect(0, 0, width, lower_quarter_height)
 obstacles_Array=[mushroom_table_SmallMask_rect]
 
 masks_array=[middle_wall_mask]
+  
