@@ -14,7 +14,7 @@ while running:
     if not result:
         running = False
     else:
-        Waitress.rect, lower_mask_rect = result
+        Waitress.rect, Waitress.lower_mask_rect = result
 
     # Rendering
     render_screen(screen, floor_image, left_wall_image, middle_wall_image, right_wall_image, Waitress, mushroom_tables)
